@@ -1,6 +1,6 @@
-﻿using TaskNestia.Server.Enums;
+﻿using Server.Enums;
 
-namespace TaskNestia.Server.Objects
+namespace Server.Objects
 {
     public class User
     {

@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TaskNestia.Server.Database;
-using TaskNestia.Server.Enums;
-using TaskNestia.Server.Helpers;
-using TaskNestia.Server.Objects;
+using Server.Database;
+using Server.Enums;
+using Server.Helpers;
+using Server.Objects;
 
-namespace TaskNestia.Server.Controllers
+namespace Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -14,8 +14,8 @@ namespace TaskNestia.Server.Controllers
     {
         private readonly ApplicationDbContext _context = context;
 
-        [HttpPost("[action]")]
         [Authorize(Roles = UserRoleConverter.Admin)]
+        [HttpPost("[action]")]
         public async Task<IActionResult> SetAdmin()
         {
             var username = User.Identity?.Name;
@@ -36,6 +36,7 @@ namespace TaskNestia.Server.Controllers
             return Ok(user);
         }
 
+        [Authorize]
         [HttpGet("[action]")]
         public async Task<IActionResult> GetCurrentUser()
         {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TaskNestia.Server.Objects;
+using Server.Objects;
 
-namespace TaskNestia.Server.Database
+namespace Server.Database
 {
     public class ApplicationDbContext : DbContext
     {

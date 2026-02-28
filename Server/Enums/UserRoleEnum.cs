@@ -1,4 +1,4 @@
-﻿namespace TaskNestia.Server.Enums
+﻿namespace Server.Enums
 {
     public enum UserRoleEnum
     {

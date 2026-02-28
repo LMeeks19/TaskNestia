@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using Server.Database;
 using System.Security.Claims;
-using TaskNestia.Server.Database;
 
 public class RoleClaimsTransformation : IClaimsTransformation
 {

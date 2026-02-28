@@ -1,6 +1,6 @@
-﻿using TaskNestia.Server.Enums;
+﻿using Server.Enums;
 
-namespace TaskNestia.Server.Helpers
+namespace Server.Helpers
 {
     public static class UserRoleConverter
     {
