@@ -3,13 +3,10 @@ using Server.Objects;
 
 namespace Server.Database
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options)
-        {
-        }
-
-        public DbSet<User> Users { get; set; } = null!;
+        public DbSet<User> Users { get; set; }
+        public DbSet<Sheet> Sheets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +18,10 @@ namespace Server.Database
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
+                .IsUnique();
+
+            modelBuilder.Entity<Sheet>()
+                .HasIndex(s => s.Id)
                 .IsUnique();
         }
     }

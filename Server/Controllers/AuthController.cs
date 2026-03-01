@@ -4,10 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Server.Database;
 using Server.Enums;
 using Server.Helpers;
+using Server.Models;
 using Server.Objects;
 
 namespace Server.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController(ApplicationDbContext context) : ControllerBase
@@ -36,7 +38,6 @@ namespace Server.Controllers
             return Ok(user);
         }
 
-        [Authorize]
         [HttpGet("[action]")]
         public async Task<IActionResult> GetCurrentUser()
         {
@@ -61,7 +62,13 @@ namespace Server.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return Ok(user);
+            return Ok(new UserModel
+            {
+                Username = user.Username,
+                Role = user.Role,
+                CreatedAt = DateTime.UtcNow
+            });
+
         }
     }
 }
