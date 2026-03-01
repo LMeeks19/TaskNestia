@@ -13,7 +13,7 @@ function TopBar() {
     return (
         <AppBar sx={{ position: 'relative', padding: '0.5rem 1rem', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', background: '#e20808' }}>
             <Typography variant="h4">
-                Tasknyst
+                TaskNestia
             </Typography>
             <IconButton color="inherit" onClick={(e) => handleClick(e)}>
                 <MenuIcon fontSize="large" />

@@ -1,14 +1,15 @@
-import { Box, Tab, TextField, Typography } from "@mui/material"
+import { Box, Button, Grid, Stack, Tab, TextField, Typography } from "@mui/material"
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import { useEffect, useState } from "react";
 import { addSheet, deleteSheet, fetchCurrentUser, fetchUserSheets } from "../server/requests";
 import SheetModel from "../models/sheetModel";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from '@mui/icons-material/AddOutlined';
 import CancelIcon from '@mui/icons-material/CancelOutlined';
 import SaveIcon from '@mui/icons-material/SaveOutlined';
+import ConfirmDialog, { ConfirmDialogProps } from "../components/ConfirmDialog";
 
 function Page() {
     const [sheets, setSheets] = useState<Array<SheetModel>>([]);
@@ -53,13 +54,24 @@ function Page() {
         </Box>
     }
 
+    const populateConfirmDeleteDialog = (id: number) => {
+        return {
+            mainButtonIcon: <DeleteIcon fontSize="small" />,
+            mainButtonText: "Delete",
+            mainButtonColour: "error",
+            title: "Delete Sheet",
+            details: "Are you sure you want to delete this sheet and all its contents? This cannot be undone!",
+            action: () => removeSheet(id)
+        } as ConfirmDialogProps
+    }
+
     return (
         <Box sx={{ padding: 3, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
             <TabContext value={selectedTab}>
                 <Box sx={{ '& .MuiTabs-indicator': { background: 'transparent' } }}>
-                    <TabList variant="scrollable" scrollButtons={true} onChange={handleChange} sx={{ '& :focus': { outline: 'none' }, '& :focus-visible': { outline: 'none' }, '& .MuiTabs-list': { gap: 1 }, '& .Mui-selected': { background: sheets[selectedTab]?.hexColour, zIndex: 3 }, '& .MuiTab-root': { '& :hover': { zIndex: 3 } } }}>
+                    <TabList variant="scrollable" scrollButtons={true} onChange={handleChange} sx={{ height: '48px', '& :focus': { outline: 'none' }, '& :focus-visible': { outline: 'none' }, '& .MuiTabs-list': { gap: 1 }, '& .Mui-selected': { background: sheets[selectedTab]?.hexColour, zIndex: 3 }, '& .MuiTab-root': { '& :hover': { zIndex: 3 } } }}>
                         {sheets.map((sheet, index) =>
-                            <Tab key={sheet.id} label={sheet.name} value={index} iconPosition="end" sx={{ lineHeight: 'normal', background: sheet.hexColour, borderRadius: '15px 15px 0 0', color: '#f1f1f1 !important' }} />
+                            <Tab key={sheet.id} label={sheet.name} value={index} sx={{ lineHeight: 'normal', background: sheet.hexColour, borderRadius: '15px 15px 0 0', color: '#f1f1f1 !important' }} />
                         )}
                         <Box onClick={() => setIsAddingSheet(true)} sx={{ display: 'flex', alignItems: 'center', background: isAddingSheet ? '#e20808' : '#e2080844', cursor: 'pointer', borderRadius: '15px 15px 0 0', padding: '12px 16px', color: '#f1f1f1 !important' }}>
                             {populateAddTab()}
@@ -68,7 +80,16 @@ function Page() {
                 </Box>
 
                 {sheets.map((sheet, index) =>
-                    <TabPanel key={sheet.id} value={index} sx={{ flexGrow: 1, background: sheet.hexColour, borderRadius: '15px', boxShadow: '0 0 10px 1px black', zIndex: 2 }}>{sheet.name}</TabPanel>
+                    <TabPanel key={sheet.id} value={index} sx={{ flexGrow: 1, background: sheet.hexColour, borderRadius: '15px', boxShadow: '0 0 10px 1px black', zIndex: 2 }}>
+                        <Grid container spacing={2}>
+                            <Grid size='grow' display='flex' alignItems='center'>
+                                <Typography variant="h5" sx={{ my: 'auto', lineHeight: 'normal' }}>{sheet.name.toUpperCase()}</Typography>
+                            </Grid>
+                            <Grid size='auto' display='flex' justifyContent='end'>
+                                <ConfirmDialog confirmDialogProps={populateConfirmDeleteDialog(sheet.id)} />
+                            </Grid>
+                        </Grid>
+                    </TabPanel>
                 )}
             </TabContext>
         </Box>
