@@ -1,11 +1,13 @@
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Divider, ButtonPropsColorOverrides, Typography } from "@mui/material";
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, ButtonPropsColorOverrides, useTheme, IconButton, Tooltip, Divider } from "@mui/material";
 import { OverridableStringUnion } from "@mui/types";
 import { ReactElement, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
-import CancelIcon from "@mui/icons-material/CancelOutlined";
+import CloseIcon from "@mui/icons-material/CloseOutlined";
 
 export default function ConfirmDialog(params: { confirmDialogProps: ConfirmDialogProps }) {
     const [open, setOpen] = useState(false);
+    const theme = useTheme();
+
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -15,37 +17,34 @@ export default function ConfirmDialog(params: { confirmDialogProps: ConfirmDialo
         setOpen(false);
     };
 
-    const deleteSheet = () => {
-        params.confirmDialogProps.action();
-        handleClose;
+    const action = async () => {
+        await params.confirmDialogProps.action()
+            .then(handleClose);
     }
 
     return (
         <Fragment>
-            <Button sx={{ display: 'flex', gap: 0.5, px: 1 }} color={params.confirmDialogProps.mainButtonColour} variant="contained" onClick={handleClickOpen}>
-                {params.confirmDialogProps.mainButtonIcon}
-                {params.confirmDialogProps.mainButtonText}
-            </Button>
-            <Dialog open={open} onClose={handleClose} sx={{ '& .MuiPaper-root': { borderRadius: '15px' } }}
-            >
-                <DialogTitle sx={{ background: '#e20808' }}>
+            <Tooltip title={params.confirmDialogProps.mainButtonTooltipText} placement="top" followCursor arrow>
+                <Button sx={{ borderRadius: 2, minWidth: 'fit-content', px: '12px' }} color={params.confirmDialogProps.mainButtonColour} variant="contained" onClick={handleClickOpen}>
+                    {params.confirmDialogProps.mainButtonIcon}
+                </Button>
+            </Tooltip>
+            <Dialog open={open} onClose={handleClose} sx={{ '& .MuiPaper-root': { borderRadius: '15px' } }} fullWidth>
+                <DialogTitle sx={{ background: theme.palette.primary.main, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     {params.confirmDialogProps.title.toUpperCase()}
+                    <IconButton size="small" color="inherit" onClick={handleClose}>
+                        <CloseIcon />
+                    </IconButton>
                 </DialogTitle>
-                <Divider />
-                <DialogContent>
+                <DialogContent sx={{ padding: '20px 24px !important' }}>
                     <DialogContentText sx={{ color: 'inherit' }}>
                         {params.confirmDialogProps.details}
                     </DialogContentText>
                 </DialogContent>
                 <Divider />
                 <DialogActions sx={{ padding: 2 }}>
-                    <Button sx={{ display: 'flex', gap: 0.5, px: 1 }} color='warning' variant="contained" onClick={handleClose}>
-                        <CancelIcon />
-                        Cancel
-                    </Button>
-                    <Button onClick={() => deleteSheet()} sx={{ display: 'flex', gap: 0.5, px: 1 }} color="error" variant="contained">
+                    <Button onClick={() => action()} sx={{ borderRadius: 2, minWidth: 'fit-content', px: '12px' }} color="error" variant="contained">
                         {params.confirmDialogProps.mainButtonIcon}
-                        Confirm
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -54,7 +53,7 @@ export default function ConfirmDialog(params: { confirmDialogProps: ConfirmDialo
 }
 
 export interface ConfirmDialogProps {
-    mainButtonText: string;
+    mainButtonTooltipText: string;
     mainButtonIcon: ReactElement;
     mainButtonColour: OverridableStringUnion<'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning', ButtonPropsColorOverrides>
     title: string;

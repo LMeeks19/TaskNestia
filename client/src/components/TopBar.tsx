@@ -11,7 +11,7 @@ function TopBar() {
     };
 
     return (
-        <AppBar sx={{ position: 'relative', padding: '0.5rem 1rem', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', background: '#e20808' }}>
+        <AppBar sx={{ position: 'relative', padding: '0.5rem 1rem', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <Typography variant="h4">
                 TaskNestia
             </Typography>
