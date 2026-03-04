@@ -17,16 +17,16 @@ namespace Server.Controllers
         private readonly ApplicationDbContext _context = context;
 
         [Authorize(Roles = UserRoleConverter.Admin)]
-        [HttpPost("[action]")]
-        public async Task<IActionResult> SetAdmin()
+        [HttpPost("[action]/{userId}")]
+        public async Task<IActionResult> SetAdmin(int userId)
         {
-            var username = User.Identity?.Name;
+            var username = User.Identity?.Name?.Split("\\")[1];
 
-            if (username == null)
+            if (!await _context.Users.AnyAsync(u => u.Username == username && u.Role == UserRoleEnum.Admin))
                 return Unauthorized();
 
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == username);
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
             if (user == null)
                 return NotFound();

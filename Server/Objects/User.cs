@@ -7,5 +7,6 @@ namespace Server.Objects
         public string Username { get; set; } = null!;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public UserRoleEnum Role { get; set; } = UserRoleEnum.User;
+        public virtual List<Sheet> Sheets { get; set; } = [];
     }
 }

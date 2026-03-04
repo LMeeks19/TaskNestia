@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Server.Controllers.RequestObjects;
 using Server.Database;
 using Server.Helpers;
 using Server.Models;
@@ -38,7 +39,7 @@ namespace Server.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> AddSheet([FromBody] string name)
+        public async Task<IActionResult> AddSheet([FromBody] CreateSheetRequest request)
         {
             var username = User.Identity?.Name?.Split("\\")[1];
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == username);
@@ -49,7 +50,7 @@ namespace Server.Controllers
             var sheet = new Sheet
             {
                 UserId = user.Id,
-                Name = name.Trim(),
+                Name = request.Name.Trim(),
                 HexColour = RandomHexColourGenerator.GetRandomHexColor()
             };
 
@@ -72,9 +73,8 @@ namespace Server.Controllers
         public async Task<IActionResult> DeleteSheet(int id)
         {
             var username = User.Identity?.Name?.Split("\\")[1];
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == username);
 
-            if (user == null)
+            if (!await _context.Users.AnyAsync(u => u.Username == username))
                 return Unauthorized();
 
             var sheet = await _context.Sheets.SingleOrDefaultAsync(s => s.Id == id);
