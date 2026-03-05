@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Server.Controllers.RequestObjects;
+using Server.Controllers.RequestModels;
 using Server.Database;
 using Server.Models;
 using Server.Objects;
@@ -16,7 +16,7 @@ namespace Server.Controllers
         private readonly ApplicationDbContext _context = context;
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> AddSection([FromBody] CreateSectionRequest request)
+        public async Task<IActionResult> AddSection([FromBody] CreateSectionRequestModel request)
         {
             var username = User.Identity?.Name?.Split("\\")[1];
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == username);

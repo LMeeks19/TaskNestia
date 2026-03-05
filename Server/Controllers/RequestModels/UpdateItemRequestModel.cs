@@ -1,6 +1,6 @@
-﻿namespace Server.Controllers.RequestObjects
+﻿namespace Server.Controllers.RequestModels
 {
-    public class UpdateItemRequest
+    public class UpdateItemRequestModel
     {
         public int Id { get; set; }
         public bool IsComplete { get; set; }

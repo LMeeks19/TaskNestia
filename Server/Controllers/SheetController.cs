@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Server.Controllers.RequestObjects;
+using Server.Controllers.RequestModels;
 using Server.Database;
 using Server.Helpers;
 using Server.Models;
@@ -39,7 +39,7 @@ namespace Server.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> AddSheet([FromBody] CreateSheetRequest request)
+        public async Task<IActionResult> AddSheet([FromBody] CreateSheetRequestModel request)
         {
             var username = User.Identity?.Name?.Split("\\")[1];
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == username);

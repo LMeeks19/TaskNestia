@@ -27,53 +27,53 @@ namespace Server.Controllers
                 .Where(ne => ne.SheetId == sheetId)
                 .ToListAsync();
 
-            var nestedEntityModels = nestedEntities
-                .Select(ne =>
+            var nestedItems = nestedEntities
+                .OfType<Item>()
+                .Where(i => i.SectionId != null)
+                .Select(i => new ItemModel
                 {
-                    if (ne is Section s)
-                    {
-                        return (NestedEntityModel)new SectionModel
-                        {
-                            Id = s.Id,
-                            Name = s.Name,
-                            Type = NestedEntityTypeEnum.Section,
-                            LastModified = s.LastModified,
-                            SheetId = s.SheetId,
-                            Items = [.. nestedEntities
-                                .OfType<Item>()
-                                .Where(i => i.SectionId == s.Id)
-                                .Select(i => new ItemModel
-                                {
-                                    Id = i.Id,
-                                    Name = i.Name,
-                                    Type = NestedEntityTypeEnum.Item,
-                                    Description = i.Description,
-                                    LastModified = i.LastModified,
-                                    IsComplete = i.IsComplete,
-                                    SectionId = i.SectionId
-                                })]
-                        };
-                    }
+                    Id = i.Id,
+                    Name = i.Name,
+                    Type = NestedEntityTypeEnum.Item,
+                    Description = i.Description,
+                    LastModified = i.LastModified,
+                    IsComplete = i.IsComplete,
+                    SectionId = i.SectionId
+                }).ToList();
 
-                    if (ne is Item i && i.SectionId == null)
-                    {
-                        return new ItemModel
-                        {
-                            Id = i.Id,
-                            Name = i.Name,
-                            Type = NestedEntityTypeEnum.Item,
-                            Description = i.Description,
-                            LastModified = i.LastModified,
-                            IsComplete = i.IsComplete,
-                            SheetId = i.SheetId
-                        };
-                    }
+            var sections = nestedEntities.OfType<Section>()
+                .Select(s => new SectionModel
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Type = NestedEntityTypeEnum.Section,
+                    LastModified = s.LastModified,
+                    SheetId = s.SheetId,
+                    Items = [.. nestedItems.Where(i => i.SectionId == s.Id)]
+                }).ToList();
 
-                    return null;
-                })
-                .Where(x => x != null)
+            var standaloneItems = nestedEntities
+                .OfType<Item>()
+                .Where(i => i.SectionId == null)
+                .Select(i => new ItemModel
+                {
+                    Id = i.Id,
+                    Name = i.Name,
+                    Type = NestedEntityTypeEnum.Item,
+                    Description = i.Description,
+                    LastModified = i.LastModified,
+                    IsComplete = i.IsComplete,
+                    SheetId = i.SheetId
+                }).ToList();
+
+
+            var nestedEntityModels = sections
+                .Cast<object>()
+                .Concat(standaloneItems)
+                .OrderByDescending(x => ((NestedEntityModel)x).LastModified)
                 .ToList();
-            
+
+
             return Ok(nestedEntityModels);
         }
     }

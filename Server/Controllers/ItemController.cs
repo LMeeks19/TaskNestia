@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Server.Controllers.RequestObjects;
+using Server.Controllers.RequestModels;
 using Server.Database;
 using Server.Models;
 using Server.Objects;
@@ -17,7 +17,7 @@ namespace Server.Controllers
         private readonly ApplicationDbContext _context = context;
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> AddItem([FromBody] CreateItemRequest request)
+        public async Task<IActionResult> AddItem([FromBody] CreateItemRequestModel request)
         {
             var username = User.Identity?.Name?.Split("\\")[1];
 
@@ -74,7 +74,7 @@ namespace Server.Controllers
         }
 
         [HttpPatch("[action]")]
-        public async Task<IActionResult> UpdateItem([FromBody] UpdateItemRequest request)
+        public async Task<IActionResult> UpdateItem([FromBody] UpdateItemRequestModel request)
         {
             var username = User.Identity?.Name?.Split("\\")[1];
 

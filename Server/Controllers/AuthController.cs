@@ -64,6 +64,7 @@ namespace Server.Controllers
 
             return Ok(new UserModel
             {
+                Id = user.Id,
                 Username = user.Username,
                 Role = user.Role,
                 CreatedAt = DateTime.UtcNow

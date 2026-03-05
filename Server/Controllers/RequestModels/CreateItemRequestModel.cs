@@ -1,6 +1,6 @@
-﻿namespace Server.Controllers.RequestObjects
+﻿namespace Server.Controllers.RequestModels
 {
-    public class CreateItemRequest
+    public class CreateItemRequestModel
     {
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;

@@ -1,6 +1,6 @@
-﻿namespace Server.Controllers.RequestObjects
+﻿namespace Server.Controllers.RequestModels
 {
-    public class CreateSectionRequest
+    public class CreateSectionRequestModel
     {
         public string Name { get; set; } = null!;
         public int SheetId { get; set; }
