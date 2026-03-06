@@ -1,6 +1,6 @@
 ﻿namespace Server.Models
 {
-    public class UpdateItemModel
+    public class UpdateSectionModel
     {
         public int Id { get; set; }
         public DateTime LastModified { get; set; }

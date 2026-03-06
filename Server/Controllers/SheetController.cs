@@ -54,7 +54,7 @@ namespace Server.Controllers
                 HexColour = RandomHexColourGenerator.GetRandomHexColor()
             };
 
-            _context.Sheets.Add(sheet);
+            await _context.Sheets.AddAsync(sheet);
             await _context.SaveChangesAsync();
 
             var sheetModel = await _context.Sheets

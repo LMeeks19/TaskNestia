@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Controllers.RequestModels;
 using Server.Database;
+using Server.Enums;
 using Server.Models;
 using Server.Objects;
 
@@ -34,7 +35,7 @@ namespace Server.Controllers
                 IsComplete = false,
             };
 
-            _context.Items.Add(item);
+            await _context.Items.AddAsync(item);
             await _context.SaveChangesAsync();
 
             var itemModel = await _context.Items
@@ -44,6 +45,7 @@ namespace Server.Controllers
                     SheetId = s.SheetId,
                     SectionId = s.SectionId,
                     Name = s.Name,
+                    Type = NestedEntityTypeEnum.Item,
                     Description = s.Description,
                     LastModified = s.LastModified,
                     IsComplete = s.IsComplete,
@@ -81,9 +83,10 @@ namespace Server.Controllers
             if (!await _context.Users.AnyAsync(u => u.Username == username))
                 return Unauthorized();
 
-            var item = await _context.Items
+            var item = await _context.NestedEntities
+                .OfType<Item>()
                 .Include(i => i.Section)
-                .SingleOrDefaultAsync(s => s.Id == request.Id);
+                .SingleOrDefaultAsync(s => s.Id == request.ItemId);
 
             if (item == null)
                 return NotFound();
@@ -96,10 +99,8 @@ namespace Server.Controllers
 
             return Ok(new UpdateItemModel {
                 Id = item.Id,
-                SectionId = item.Section?.Id,
-                SectionLastModified = item.Section?.LastModified,
-                ItemLastModified = item.LastModified,
-                ItemIsComplete = item.IsComplete
+                LastModified = item.LastModified,
+                IsComplete = item.IsComplete
             });
         }
     }

@@ -7,6 +7,7 @@ import CreateItemRequestModel from "./models/createItemRequestModel";
 import CreateSectionRequestModel from "./models/createSectionRequestModel";
 import CreateSheetRequestModel from "./models/createSheetRequestModel";
 import UpdateItemRequestModel from "./models/updateItemRequestModel";
+import UpdateSectionRequestModel from "./models/updateSectionRequestModel";
 
 async function request<T>(endpoint: string, params: RequestInit): Promise<T> {
     const response = await fetch(`/api${endpoint}`, {
@@ -73,15 +74,22 @@ async function requestSection<T>(method: string, params: RequestInit): Promise<T
 }
 
 export async function addSection(request: CreateSectionRequestModel): Promise<SectionModel> {
-    return await requestSection<SectionModel>(`addSection/`, {
+    return await requestSection<SectionModel>(`addSection`, {
         method: 'POST',
         body: JSON.stringify(request)
     });
 }
 
 export async function deleteSection(id: number): Promise<number> {
-    return await requestItem<number>(`deleteSection/${id}`, {
+    return await requestSection<number>(`deleteSection/${id}`, {
         method: 'DELETE'
+    });
+}
+
+export async function updateSection(request: UpdateSectionRequestModel): Promise<UpdateNestedEntityModel> {
+    return await requestSection<UpdateNestedEntityModel>(`updateSection`, {
+        method: 'PATCH',
+        body: JSON.stringify(request)
     });
 }
 
@@ -104,8 +112,8 @@ export async function deleteItem(id: number): Promise<number> {
     });
 }
 
-export async function updateItem(request: UpdateItemRequestModel): Promise<UpdateItemModel> {
-    return await requestItem<UpdateItemModel>(`updateItem`, {
+export async function updateItem(request: UpdateItemRequestModel): Promise<UpdateNestedEntityModel> {
+    return await requestItem<UpdateNestedEntityModel>(`updateItem`, {
         method: 'PATCH',
         body: JSON.stringify(request)
     });

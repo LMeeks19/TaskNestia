@@ -1,8 +1,8 @@
 ﻿namespace Server.Controllers.RequestModels
 {
-    public class UpdateItemRequestModel
+    public class UpdateSectionRequestModel
     {
-        public int ItemId { get; set; }
+        public int SectionId { get; set; }
         public bool IsComplete { get; set; }
     }
 }

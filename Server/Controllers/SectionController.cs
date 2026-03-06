@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Controllers.RequestModels;
 using Server.Database;
+using Server.Enums;
 using Server.Models;
 using Server.Objects;
 
@@ -31,7 +32,7 @@ namespace Server.Controllers
                 LastModified = DateTime.UtcNow,
             };
 
-            _context.Sections.Add(section);
+            await _context.Sections.AddAsync(section);
             await _context.SaveChangesAsync();
 
             var sectionModel = await _context.Sections
@@ -40,6 +41,7 @@ namespace Server.Controllers
                     Id = s.Id,
                     SheetId = s.SheetId,
                     Name = s.Name,
+                    Type = NestedEntityTypeEnum.Section,
                     LastModified = s.LastModified,
                     Items = new List<ItemModel>()
                 })
@@ -56,7 +58,8 @@ namespace Server.Controllers
             if (!await _context.Users.AnyAsync(u => u.Username == username))
                 return Unauthorized();
 
-            var section = await _context.Sections
+            var section = await _context.NestedEntities
+                .OfType<Section>()
                 .Include(s => s.Items)
                 .SingleOrDefaultAsync(s => s.Id == id);
 
@@ -68,6 +71,39 @@ namespace Server.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(section.Id);
+        }
+
+        [HttpPatch("[action]")]
+        public async Task<IActionResult> UpdateSection([FromBody] UpdateSectionRequestModel request)
+        {
+            var username = User.Identity?.Name?.Split("\\")[1];
+
+            if (!await _context.Users.AnyAsync(u => u.Username == username))
+                return Unauthorized();
+
+            var section = await _context.NestedEntities
+                .OfType<Section>()
+                .Include(s => s.Items)
+                .SingleOrDefaultAsync(s => s.Id == request.SectionId);
+
+            if (section == null)
+                return NotFound();
+
+            section.LastModified = DateTime.UtcNow;
+            section.Items.ForEach(i =>
+            {
+                i.IsComplete = request.IsComplete;
+                i.LastModified = DateTime.UtcNow;
+            });
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new UpdateSectionModel
+            {
+                Id = section.Id,
+                IsComplete = request.IsComplete,
+                LastModified = section.LastModified,
+            });
         }
     }
 }

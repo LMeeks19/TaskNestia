@@ -4,7 +4,6 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import { Fragment, useEffect, useState } from "react";
 import { deleteSheet, fetchCurrentUser, fetchNestedEntities, fetchUserSheets } from "../server/requests";
-import SheetModel from "../models/sheetModel";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import ConfirmDialog, { ConfirmDialogProps } from "../components/ConfirmDialog";
@@ -13,27 +12,39 @@ import AddSheetDialog from "../components/AddSheetDialog";
 import SectionModel from "../models/sectionModel";
 import ItemModel from "../models/itemModel";
 import NestedEntityType from "../enums/nestedEntityTypeEnum";
+import Section from "../components/Section";
+import Item from "../components/Item";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { currentUserState, nestedEntitiesState, sheetsState } from "../state/globalState";
+import AddNestedEntityDialog from "../components/AddNestedEntityDialog";
 
 function Page() {
-    const [sheets, setSheets] = useState<Array<SheetModel>>([]);
-    const [nestedEntities, setNestedEntities] = useState<Array<SectionModel | ItemModel>>([]);
+    const setCurrentUser = useSetRecoilState(currentUserState);
+    const [sheets, setSheets] = useRecoilState(sheetsState);
+    const [nestedEntities, setNestedEntities] = useRecoilState(nestedEntitiesState);
+
     const [selectedTab, setSelectedTab] = useState<number>(0);
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
     useEffect(() => {
-        fetchCurrentUser()
-            .then(async () => {
-                var sheets = await fetchUserSheets();
-                setSheets(sheets);
-                if (sheets.length > 0)
-                    setNestedEntities(await fetchNestedEntities(sheets[selectedTab]?.id))
-            })
-            .then(() => setIsLoaded(true))
+        fetchDetails();
     }, []);
 
+    async function fetchDetails() {
+        setCurrentUser(await fetchCurrentUser());
+        var sheets = await fetchUserSheets()
+        setSheets(sheets);
+
+        if (sheets.length > 0)
+            setNestedEntities(await fetchNestedEntities(sheets[selectedTab]?.id));
+
+        setIsLoaded(true);
+    }
+
     useEffect(() => {
-        if (sheets.length > 0 && selectedTab != undefined)
+        if (sheets.length > 0 && selectedTab != undefined) {
             getNestedEntities()
+        }
     }, [selectedTab])
 
     async function getNestedEntities() {
@@ -62,30 +73,8 @@ function Page() {
 
     const populatePanel = (ne: SectionModel | ItemModel) => {
         if (ne.type === NestedEntityType.Section)
-            return populateSection(ne as SectionModel)
-        return populateItem(ne as ItemModel)
-    }
-
-    const populateSection = (section: SectionModel) => {
-        return (
-            <Box key={section.id}>
-                <Typography>{section.name}</Typography>
-                <Typography>{new Date(section.lastModified).toUTCString()}</Typography>
-                <Box ml={2}>
-                    {section.items.map((item) => populateItem(item))}
-                </Box>
-            </Box>
-        );
-    }
-
-    const populateItem = (item: ItemModel) => {
-        return (
-            <Box key={item.id}>
-                <Typography>{item.name}</Typography>
-                <Typography>{item.description}</Typography>
-                <Typography>{new Date(item.lastModified).toUTCString()}</Typography>
-            </Box>
-        )
+            return <Section id={ne.id} />
+        return <Item itemId={ne.id} sectionId={(ne as ItemModel).sectionId} />
     }
 
     return (
@@ -108,15 +97,17 @@ function Page() {
                                     <Grid size='grow' display='flex' alignItems='center'>
                                         <Typography variant="h5" sx={{ my: 'auto', lineHeight: 'normal' }}>{sheet.name.toUpperCase()}</Typography>
                                     </Grid>
-                                    <Grid size='auto' display='flex' justifyContent='end'>
+                                    <Grid size='auto' display='flex' justifyContent='end' gap={1}>
+                                        <AddNestedEntityDialog sheetId={sheet.id} />
                                         <ConfirmDialog confirmDialogProps={populateConfirmDeleteDialog(sheet.id)} />
                                     </Grid>
                                     <Grid container spacing={2} size={2} columns={2}>
                                         {nestedEntities.map((ne) => {
                                             return (
-                                                <Grid spacing={2} size={1}>
+                                                <Box key={ne.id}>
                                                     {populatePanel(ne)}
-                                                </Grid>)
+                                                </Box>
+                                            )
                                         })}
                                     </Grid>
                                 </Grid>

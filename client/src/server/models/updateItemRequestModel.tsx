@@ -1,5 +1,5 @@
 interface UpdateItemRequestModel {
-    id: number;
+    itemId: number;
     isComplete: boolean;
 }
 
