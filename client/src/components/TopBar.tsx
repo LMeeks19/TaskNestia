@@ -11,14 +11,14 @@ function TopBar() {
     };
 
     return (
-        <AppBar sx={{ position: 'relative', padding: '0.5rem 1rem', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <AppBar sx={{ position: 'relative', padding: '0.75rem 1rem', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <Typography variant="h4">
                 TaskNestia
             </Typography>
-            <IconButton color="inherit" onClick={(e) => handleClick(e)}>
+            {/* <IconButton color="inherit" onClick={(e) => handleClick(e)}>
                 <MenuIcon fontSize="large" />
             </IconButton>
-            <TopBarMenu anchorEl={anchorEl} setAnchorEl={setAnchorEl} />
+            <TopBarMenu anchorEl={anchorEl} setAnchorEl={setAnchorEl} /> */}
         </AppBar>
     )
 }

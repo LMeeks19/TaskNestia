@@ -33,6 +33,7 @@ namespace Server.Controllers
                     Name = s.Name, 
                     HexColour = s.HexColour 
                 })
+                .OrderByDescending(s => s.Id)
                 .ToListAsync();
 
             return Ok(sheets);

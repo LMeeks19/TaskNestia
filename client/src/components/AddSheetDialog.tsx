@@ -5,8 +5,11 @@ import CloseIcon from "@mui/icons-material/CloseOutlined";
 import AddIcon from "@mui/icons-material/AddOutlined";
 import SheetModel from "../models/sheetModel";
 import { addSheet } from "../server/requests";
+import { useSetRecoilState } from "recoil";
+import { nestedEntitiesState } from "../state/globalState";
 
 export default function AddSheetDialog(props: { sheets: Array<SheetModel>, setSheets: Dispatch<SetStateAction<SheetModel[]>> }) {
+    const setNestedEntities = useSetRecoilState(nestedEntitiesState);
     const [open, setOpen] = useState(false);
     const [sheetName, setSheetName] = useState<string>("");
     const theme = useTheme();
@@ -23,6 +26,7 @@ export default function AddSheetDialog(props: { sheets: Array<SheetModel>, setSh
     const createSheet = async () => {
         await addSheet(sheetName)
             .then((sheet) => props.setSheets([sheet, ...props.sheets]))
+            .then(() => setNestedEntities([]))
             .then(() => setSheetName(""))
             .then(handleClose);
     }
@@ -46,7 +50,7 @@ export default function AddSheetDialog(props: { sheets: Array<SheetModel>, setSh
                 </DialogContent>
                 <Divider />
                 <DialogActions sx={{ padding: 2 }}>
-                    <Button onClick={() => createSheet()} sx={{ borderRadius: 2, minWidth: 'fit-content', px: '12px' }} variant="contained">
+                    <Button onClick={() => createSheet()} disabled={!sheetName || sheetName.trim() === ""} sx={{ borderRadius: 2, minWidth: 'fit-content', px: '12px' }} variant="contained">
                         <AddIcon />
                     </Button>
                 </DialogActions>

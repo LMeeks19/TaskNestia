@@ -1,21 +1,27 @@
-import { Checkbox, Divider, FormControlLabel, Grid, IconButton, Tooltip } from "@mui/material";
+import { Checkbox, Divider, FormControlLabel, Grid, IconButton, Tooltip, Typography, useTheme } from "@mui/material";
 import SectionModel from "../models/sectionModel";
 import Item from "./Item";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { nestedEntitiesState } from "../state/globalState";
 import { updateSectionEntity } from "../helpers/recursives";
 import { deleteSection, updateSection } from "../server/requests";
 import UpdateSectionRequestModel from "../server/models/updateSectionRequestModel";
 import AddNestedEntotyDialog from "./AddNestedEntityDialog";
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ConfirmDialog, { ConfirmDialogProps } from "./ConfirmDialog";
 
 function Section(props: { id: number }) {
     const [nestedEntities, setNestedEntities] = useRecoilState(nestedEntitiesState);
     const [section, setSection] = useState<SectionModel>({} as SectionModel);
+    const [collapsed, setCollapsed] = useState<boolean>(section.items?.every(i => i.isComplete));
+    const theme = useTheme();
 
     useEffect(() => {
         var section = nestedEntities.find(ne => ne.id === props.id) as SectionModel;
+        setCollapsed(section.items?.every(i => i.isComplete));
         setSection(section);
     }, [nestedEntities])
 
@@ -34,41 +40,68 @@ function Section(props: { id: number }) {
         setNestedEntities(updatedNestedEntities);
     }
 
-    const handleDelete = async () => {
-        var deletedSectionId = await deleteSection(section.id);
+    const handleDelete = async (id: number) => {
+        var deletedSectionId = await deleteSection(id);
         setNestedEntities((nestedEntities) => nestedEntities.filter(ne => ne.id !== deletedSectionId));
     }
 
+    const populateConfirmDeleteDialog = (id: number) => {
+        return {
+            mainButtonTooltipText: "Delete",
+            mainButtonIcon: <DeleteIcon />,
+            mainButtonColour: "error",
+            title: "Delete Section",
+            details: "Are you sure you want to delete this section and all its contents? This cannot be undone!",
+            action: () => handleDelete(id)
+        } as ConfirmDialogProps
+    }
+
     return (
-        <Grid key={section.id} sx={{ borderRadius: 5 }}>
-            <Grid container columns={3} spacing={2}>
-                <Grid size='grow' display='flex' alignItems='center'>
-                    <FormControlLabel
-                        label={section.name}
-                        control={
-                            <Checkbox
-                                checked={section.items?.every(i => i.isComplete)}
-                                onChange={handleChange}
-                            />
-                        }
-                    />
-                </Grid>
-                <Grid size='auto' display='flex' alignItems='center' justifyContent='end'>
+        <Grid key={section.id} bgcolor={theme.palette.primary.main} p={1} borderRadius={2.5} boxShadow={2}>
+            <Grid container columns={3} spacing={2} pb={!collapsed ? 1 : 0} wrap='nowrap' justifyContent='space-between'>
+                <FormControlLabel
+                    sx={{ mx: 0, gap: 1, overflow: 'hidden' }}
+                    label={
+                        <Typography whiteSpace='nowrap' overflow='hidden' textOverflow='ellipsis'>
+                            {section.name}
+                        </Typography>
+                    }
+                    control={
+                        <Checkbox
+                            sx={{ color: `${theme.palette.primary.contrastText} !important`, p: 0.5 }}
+                            checked={section.items?.every(i => i.isComplete)}
+                            onChange={handleChange}
+                        />
+                    }
+                />
+                <Grid size='auto' display='flex' alignItems='center' height='fit-content'>
                     <AddNestedEntotyDialog sheetId={section.sheetId} sectionId={section.id} />
-                    <Tooltip title="Delete" placement="top" followCursor arrow>
-                        <IconButton color="error" size="small" onClick={handleDelete}>
-                            <DeleteIcon />
+                    <ConfirmDialog confirmDialogProps={populateConfirmDeleteDialog(section.id)} isNestedEntity={true} />
+                    <Tooltip title={collapsed ? 'Expand' : 'Collapse'} placement="top" followCursor arrow>
+                        <IconButton sx={{ color: 'inherit' }} size="small" onClick={() => setCollapsed(!collapsed)}>
+                            {collapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
                         </IconButton>
                     </Tooltip>
                 </Grid>
             </Grid>
-            <Divider />
-            <Grid ml={2}>
-                {section.items?.map((item) => {
-                    return <Item key={item.id} itemId={item.id} sectionId={item.sectionId} />
-                })}
-            </Grid>
-        </Grid>)
+            {!collapsed &&
+                <Fragment>
+                    <Divider />
+                    {section.items?.length === 0 ? (
+                        <Grid container direction='column' pt={1}>
+                            <Typography textAlign='center' sx={{ opacity: 0.75 }}>No items yet</Typography>
+                        </Grid>
+                    ) : (
+                        <Grid container direction='column' pt={1}>
+                            {section.items?.map((item) => {
+                                return <Item key={item.id} itemId={item.id} sectionId={item.sectionId} />
+                            })}
+                        </Grid>
+                    )}
+                </Fragment>
+            }
+        </Grid>
+    )
 }
 
 export default Section;

@@ -1,11 +1,11 @@
-import { Box, Grid, Tab, Typography } from "@mui/material"
+import { Box, Grid, Tab, Typography, useTheme } from "@mui/material"
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import { Fragment, useEffect, useState } from "react";
 import { deleteSheet, fetchCurrentUser, fetchNestedEntities, fetchUserSheets } from "../server/requests";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import Masonry from "react-masonry-css";
 import ConfirmDialog, { ConfirmDialogProps } from "../components/ConfirmDialog";
 import Loader from "../components/Loader";
 import AddSheetDialog from "../components/AddSheetDialog";
@@ -26,6 +26,8 @@ function Page() {
     const [selectedTab, setSelectedTab] = useState<number>(0);
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
+    const theme = useTheme();
+
     useEffect(() => {
         fetchDetails();
     }, []);
@@ -42,6 +44,7 @@ function Page() {
     }
 
     useEffect(() => {
+        setNestedEntities([]);
         if (sheets.length > 0 && selectedTab != undefined) {
             getNestedEntities()
         }
@@ -77,10 +80,15 @@ function Page() {
         return <Item itemId={ne.id} sectionId={(ne as ItemModel).sectionId} />
     }
 
+    const breakpoints = {
+        default: 2,
+        800: 1,
+    };
+
     return (
         <Fragment>
             {isLoaded ?
-                <Box sx={{ padding: 3, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                <Box p={3} display='flex' flexDirection='column' flexGrow={1} color={theme.palette.primary.contrastText}>
                     <TabContext value={selectedTab}>
                         <Box sx={{ '& .MuiTabs-indicator': { background: 'transparent' } }}>
                             <TabList variant="scrollable" scrollButtons={true} onChange={handleChange} sx={{ height: '48px', '& :focus': { outline: 'none' }, '& :focus-visible': { outline: 'none' }, '& .MuiTabs-list': { gap: 1 }, '& .Mui-selected': { background: sheets[selectedTab]?.hexColour, zIndex: 3 }, '& .MuiTab-root': { '& :hover': { zIndex: 3 } } }}>
@@ -93,24 +101,30 @@ function Page() {
 
                         {sheets.map((sheet, index) =>
                             <TabPanel key={sheet.id} value={index} sx={{ flexGrow: 1, background: sheet.hexColour, borderRadius: '15px', boxShadow: '0 0 10px 1px black', zIndex: 2 }}>
-                                <Grid container columns={2} spacing={2}>
-                                    <Grid size='grow' display='flex' alignItems='center'>
-                                        <Typography variant="h5" sx={{ my: 'auto', lineHeight: 'normal' }}>{sheet.name.toUpperCase()}</Typography>
-                                    </Grid>
-                                    <Grid size='auto' display='flex' justifyContent='end' gap={1}>
+                                <Box display='flex' alignItems='center' justifyContent='space-between' gap={1}>
+                                    <Typography variant="h5" noWrap sx={{ my: 'auto', lineHeight: 'normal' }}>{sheet.name.toUpperCase()}</Typography>
+                                    <Box display='flex' gap={1}>
                                         <AddNestedEntityDialog sheetId={sheet.id} />
                                         <ConfirmDialog confirmDialogProps={populateConfirmDeleteDialog(sheet.id)} />
-                                    </Grid>
-                                    <Grid container spacing={2} size={2} columns={2}>
-                                        {nestedEntities.map((ne) => {
-                                            return (
-                                                <Box key={ne.id}>
-                                                    {populatePanel(ne)}
-                                                </Box>
-                                            )
-                                        })}
-                                    </Grid>
-                                </Grid>
+                                    </Box>
+                                </Box>
+                                <Box display='flex' flexGrow={1} mt={2} sx={{ overflowY: 'auto' }}>
+                                    {nestedEntities?.length === 0 ? (
+                                        <Typography variant="h6" sx={{ opacity: 0.7 }}>
+                                            Nothing to see here! Click the + button to add your first section or item
+                                        </Typography>
+                                    ) : (
+                                        <Masonry breakpointCols={breakpoints} className="masonry-grid" columnClassName="masonry-grid-column">
+                                            {nestedEntities.map((ne) => {
+                                                return (
+                                                    <Box key={ne.id}>
+                                                        {populatePanel(ne)}
+                                                    </Box>
+                                                )
+                                            })}
+                                        </Masonry>
+                                    )}
+                                </Box>
                             </TabPanel>
                         )}
                     </TabContext>
@@ -118,7 +132,7 @@ function Page() {
                 :
                 <Loader />
             }
-        </Fragment>
+        </Fragment >
     );
 }
 

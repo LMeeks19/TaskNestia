@@ -4,7 +4,7 @@ import { ReactElement, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
 import CloseIcon from "@mui/icons-material/CloseOutlined";
 
-export default function ConfirmDialog(params: { confirmDialogProps: ConfirmDialogProps }) {
+export default function ConfirmDialog(params: { confirmDialogProps: ConfirmDialogProps, isNestedEntity?: boolean }) {
     const [open, setOpen] = useState(false);
     const theme = useTheme();
 
@@ -25,9 +25,15 @@ export default function ConfirmDialog(params: { confirmDialogProps: ConfirmDialo
     return (
         <Fragment>
             <Tooltip title={params.confirmDialogProps.mainButtonTooltipText} placement="top" followCursor arrow>
-                <Button sx={{ borderRadius: 2, minWidth: 'fit-content', px: '12px' }} color={params.confirmDialogProps.mainButtonColour} variant="contained" onClick={handleClickOpen}>
-                    {params.confirmDialogProps.mainButtonIcon}
-                </Button>
+                {params.isNestedEntity ? (
+                    <IconButton color={params.confirmDialogProps.mainButtonColour} size="small" onClick={handleClickOpen}>
+                        {params.confirmDialogProps.mainButtonIcon}
+                    </IconButton>
+                ) : (
+                    <Button sx={{ borderRadius: 2, minWidth: 'fit-content', px: '12px' }} color={params.confirmDialogProps.mainButtonColour} variant="contained" onClick={handleClickOpen}>
+                        {params.confirmDialogProps.mainButtonIcon}
+                    </Button>
+                )}
             </Tooltip>
             <Dialog open={open} onClose={handleClose} sx={{ '& .MuiPaper-root': { borderRadius: '15px' } }} fullWidth>
                 <DialogTitle sx={{ background: theme.palette.primary.main, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

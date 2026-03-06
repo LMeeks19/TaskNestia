@@ -70,7 +70,6 @@ namespace Server.Controllers
             var nestedEntityModels = sections
                 .Cast<object>()
                 .Concat(standaloneItems)
-                .OrderByDescending(x => ((NestedEntityModel)x).LastModified)
                 .ToList();
 
 
