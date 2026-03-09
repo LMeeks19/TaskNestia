@@ -88,7 +88,7 @@ export default function AddNestedEntotyDialog(props: { sheetId: number, sectionI
                     </IconButton>
                 </DialogTitle>
                 <DialogContent sx={{ padding: '20px 24px !important' }}>
-                    <TextField error={!selectedName} helperText={!selectedName && "A name is required"} value={selectedName} onChange={(e) => setSelectedName(e.target.value)} variant="standard" label="Name" placeholder="Enter name..." fullWidth sx={{ '& .MuiInputLabel-root': { color: 'inherit' }, '& .MuiInput-root': { color: 'inherit', '::before': { borderBottomColor: '#1976d244' } } }} />
+                    <TextField slotProps={{ htmlInput: { maxLength: 50 } }} error={!selectedName} helperText={!selectedName && "A name is required"} value={selectedName} onChange={(e) => setSelectedName(e.target.value)} variant="standard" label="Name" placeholder="Enter name..." fullWidth sx={{ '& .MuiInputLabel-root': { color: 'inherit' }, '& .MuiInput-root': { color: 'inherit', '::before': { borderBottomColor: '#1976d244' } } }} />
                     <Select error={selectedType === -1} value={selectedType} onChange={(e) => setSelectedType(e.target.value as NestedEntityType)} variant="standard" label="Type" fullWidth sx={{ mt: 3, color: 'inherit', '::before': { borderBottomColor: '#1976d244' }, '& .MuiSvgIcon-root': { color: 'inherit' } }}>
                         <MenuItem value={-1}>Select type...</MenuItem>
                         {!props.sectionId && (
@@ -97,7 +97,7 @@ export default function AddNestedEntotyDialog(props: { sheetId: number, sectionI
                         <MenuItem value={NestedEntityType.Item}>Item</MenuItem>
                     </Select>
                     {selectedType === NestedEntityType.Item && (
-                        <TextField error={!description} helperText={!description && "A description is required"} value={description} onChange={(e) => setDescription(e.target.value)} variant="standard" label="Description" fullWidth multiline rows={4} sx={{ mt: 3, '& .MuiInputLabel-root': { color: 'inherit' }, '& .MuiInput-root': { color: 'inherit', '::before': { borderBottomColor: '#1976d244' } } }} />
+                        <TextField slotProps={{ htmlInput: { maxLength: 100 } }} error={!description} helperText={!description && "A description is required"} value={description} onChange={(e) => setDescription(e.target.value)} variant="standard" label="Description" fullWidth multiline rows={4} sx={{ mt: 3, '& .MuiInputLabel-root': { color: 'inherit' }, '& .MuiInput-root': { color: 'inherit', '::before': { borderBottomColor: '#1976d244' } } }} />
                     )}
                 </DialogContent>
                 <Divider />

@@ -92,7 +92,7 @@ function Section(props: { id: number }) {
                             <Typography textAlign='center' sx={{ opacity: 0.75 }}>No items yet</Typography>
                         </Grid>
                     ) : (
-                        <Grid container direction='column' pt={1}>
+                        <Grid container direction='column' pt={1} gap={1}>
                             {section.items?.map((item) => {
                                 return <Item key={item.id} itemId={item.id} sectionId={item.sectionId} />
                             })}

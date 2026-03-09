@@ -81,8 +81,8 @@ function Item(props: { itemId: number, sectionId?: number }) {
                     sx={{ mx: 0, gap: 1, overflow: 'hidden', '& .MuiFormControlLabel-label': { overflow: 'hidden' } }}
                     label={
                         <Box display='flex' flexDirection='column' justifyContent='center'>
-                            <Typography whiteSpace='nowrap' overflow='hidden' textOverflow='ellipsis'>{item.name}</Typography>
-                            <Typography whiteSpace='nowrap' overflow='hidden' textOverflow='ellipsis' variant="caption" sx={{ opacity: 0.75 }}>{item.description}</Typography>
+                            <Typography>{item.name}</Typography>
+                            <Typography variant="caption" sx={{ opacity: 0.75 }}>{item.description}</Typography>
                         </Box>
                     }
                     control={<Checkbox
