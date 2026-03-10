@@ -59,8 +59,8 @@ function Section(props: { id: number }) {
     const isComplete = section.items?.every(i => i.isComplete) ?? false;
 
     return (
-        <Grid key={section.id} sx={{ opacity: isComplete ? 0.5 : 1 }} bgcolor={theme.palette.primary.main} p={1} borderRadius={2.5} boxShadow={2}>
-            <Grid container columns={3} spacing={2} pb={!collapsed ? 1 : 0} wrap='nowrap' justifyContent='space-between'>
+        <Grid key={section.id} bgcolor={theme.palette.primary.main} p={1} borderRadius={2.5} boxShadow={2}>
+            <Grid container columns={3} sx={{ opacity: isComplete ? 0.5 : 1 }} spacing={2} pb={!collapsed ? 1 : 0} wrap='nowrap' justifyContent='space-between'>
                 <FormControlLabel
                     sx={{ mx: 0, gap: 1, overflow: 'hidden' }}
                     label={
