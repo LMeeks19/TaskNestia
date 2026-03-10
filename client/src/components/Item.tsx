@@ -75,7 +75,7 @@ function Item(props: { itemId: number, sectionId?: number }) {
     }
 
     return (
-        <Grid key={item.id} bgcolor={theme.palette.primary.main} p={!item.sectionId ? 1 : 0} borderRadius={2.5} boxShadow={!item.sectionId ? 1 : 0}>
+        <Grid key={item.id} sx={{ opacity: item.isComplete ? 0.5 : 1 }} bgcolor={theme.palette.primary.main} p={!item.sectionId ? 1 : 0} borderRadius={2.5} boxShadow={!item.sectionId ? 1 : 0}>
             <Grid container columns={2} spacing={1} wrap='nowrap' justifyContent='space-between'>
                 <FormControlLabel
                     sx={{ mx: 0, gap: 1, overflow: 'hidden', '& .MuiFormControlLabel-label': { overflow: 'hidden' } }}

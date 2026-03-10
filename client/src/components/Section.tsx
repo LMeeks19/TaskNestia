@@ -56,8 +56,10 @@ function Section(props: { id: number }) {
         } as ConfirmDialogProps
     }
 
+    const isComplete = section.items?.every(i => i.isComplete) ?? false;
+
     return (
-        <Grid key={section.id} bgcolor={theme.palette.primary.main} p={1} borderRadius={2.5} boxShadow={2}>
+        <Grid key={section.id} sx={{ opacity: isComplete ? 0.5 : 1 }} bgcolor={theme.palette.primary.main} p={1} borderRadius={2.5} boxShadow={2}>
             <Grid container columns={3} spacing={2} pb={!collapsed ? 1 : 0} wrap='nowrap' justifyContent='space-between'>
                 <FormControlLabel
                     sx={{ mx: 0, gap: 1, overflow: 'hidden' }}
@@ -69,7 +71,7 @@ function Section(props: { id: number }) {
                     control={
                         <Checkbox
                             sx={{ color: `${theme.palette.primary.contrastText} !important`, p: 0.5 }}
-                            checked={section.items?.every(i => i.isComplete)}
+                            checked={isComplete}
                             onChange={handleChange}
                         />
                     }
