@@ -56,7 +56,7 @@ function Section(props: { id: number }) {
         } as ConfirmDialogProps
     }
 
-    const isComplete = section.items?.every(i => i.isComplete) ?? false;
+    const isComplete = section.items?.length > 0 && section.items?.every(i => i.isComplete);
 
     return (
         <Grid key={section.id} bgcolor={theme.palette.primary.main} p={1} borderRadius={2.5} boxShadow={2}>

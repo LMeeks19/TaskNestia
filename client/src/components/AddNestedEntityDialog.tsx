@@ -18,7 +18,7 @@ export default function AddNestedEntotyDialog(props: { sheetId: number, sectionI
     const [open, setOpen] = useState(false);
 
     const [selectedName, setSelectedName] = useState("");
-    const [selectedType, setSelectedType] = useState<NestedEntityType | -1>(-1);
+    const [selectedType, setSelectedType] = useState<NestedEntityType | -1>(props.sectionId ? NestedEntityType.Item : -1);
     const [description, setDescription] = useState<string | null>(null);
 
     const theme = useTheme();
@@ -47,7 +47,7 @@ export default function AddNestedEntotyDialog(props: { sheetId: number, sectionI
                 sheetId: props.sheetId,
                 sectionId: props.sectionId,
                 name: selectedName,
-                description: description
+                description: description ?? ""
             } as CreateItemRequestModel
             var itemResponse = await addItem(itemRequest);
 
@@ -97,12 +97,12 @@ export default function AddNestedEntotyDialog(props: { sheetId: number, sectionI
                         <MenuItem value={NestedEntityType.Item}>Item</MenuItem>
                     </Select>
                     {selectedType === NestedEntityType.Item && (
-                        <TextField slotProps={{ htmlInput: { maxLength: 100 } }} error={!description} helperText={!description && "A description is required"} value={description} onChange={(e) => setDescription(e.target.value)} variant="standard" label="Description" fullWidth multiline rows={4} sx={{ mt: 3, '& .MuiInputLabel-root': { color: 'inherit' }, '& .MuiInput-root': { color: 'inherit', '::before': { borderBottomColor: '#1976d244' } } }} />
+                        <TextField slotProps={{ htmlInput: { maxLength: 100 } }} value={description} onChange={(e) => setDescription(e.target.value)} variant="standard" label="Description" fullWidth multiline rows={4} sx={{ mt: 3, '& .MuiInputLabel-root': { color: 'inherit' }, '& .MuiInput-root': { color: 'inherit', '::before': { borderBottomColor: '#1976d244' } } }} />
                     )}
                 </DialogContent>
                 <Divider />
                 <DialogActions sx={{ padding: 2 }}>
-                    <Button disabled={!selectedName || selectedType === -1 || (selectedType === NestedEntityType.Item && !description)} onClick={() => createNestedEntity()} sx={{ borderRadius: 2, minWidth: 'fit-content', px: '12px' }} variant="contained">
+                    <Button disabled={!selectedName || selectedType === -1} onClick={() => createNestedEntity()} sx={{ borderRadius: 2, minWidth: 'fit-content', px: '12px' }} variant="contained">
                         <AddIcon />
                     </Button>
                 </DialogActions>
