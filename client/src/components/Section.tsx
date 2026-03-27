@@ -1,4 +1,4 @@
-import { Checkbox, Divider, FormControlLabel, Grid, IconButton, Tooltip, Typography, useTheme } from "@mui/material";
+import { Checkbox, Chip, Divider, FormControlLabel, Grid, IconButton, Tooltip, Typography, useTheme } from "@mui/material";
 import SectionModel from "../models/sectionModel";
 import Item from "./Item";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -56,7 +56,9 @@ function Section(props: { id: number }) {
         } as ConfirmDialogProps
     }
 
-    const isComplete = section.items?.length > 0 && section.items?.every(i => i.isComplete);
+    const numberCompleted = section.items?.reduce((count, item) => count + (item.isComplete ? 1 : 0), 0);
+    const completionProgress: string = `${numberCompleted}/${section.items?.length}`
+    const isComplete = numberCompleted == section.items?.length && section.items?.length != 0;
 
     return (
         <Grid key={section.id} bgcolor={theme.palette.primary.main} p={1} borderRadius={2.5} boxShadow={2}>
@@ -77,6 +79,7 @@ function Section(props: { id: number }) {
                     }
                 />
                 <Grid size='auto' display='flex' alignItems='center' height='fit-content'>
+                    <Chip label={completionProgress} color={isComplete ? "success" : numberCompleted === 0 ? "error" : "warning"} sx={{ color: 'inherit' }} />
                     <AddNestedEntotyDialog sheetId={section.sheetId} sectionId={section.id} />
                     <ConfirmDialog confirmDialogProps={populateConfirmDeleteDialog(section.id)} isNestedEntity={true} />
                     <Tooltip title={collapsed ? 'Expand' : 'Collapse'} placement="top" followCursor arrow>
