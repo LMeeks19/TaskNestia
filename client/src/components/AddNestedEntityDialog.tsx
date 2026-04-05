@@ -12,7 +12,7 @@ import { nestedEntitiesState } from "../state/globalState";
 import SectionModel from "../models/sectionModel";
 import ItemModel from "../models/itemModel";
 
-export default function AddNestedEntotyDialog(props: { sheetId: number, sectionId?: number }) {
+export default function AddNestedEntityDialog(props: { sheetId: number, sectionId?: number }) {
     const [nestedEntities, setNestedEntities] = useRecoilState(nestedEntitiesState);
 
     const [open, setOpen] = useState(false);
@@ -29,7 +29,7 @@ export default function AddNestedEntotyDialog(props: { sheetId: number, sectionI
 
     const handleClose = () => {
         setSelectedName("");
-        setSelectedType(-1);
+        setSelectedType(props.sectionId ? NestedEntityType.Item : -1);
         setDescription(null);
         setOpen(false);
     };

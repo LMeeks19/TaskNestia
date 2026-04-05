@@ -8,6 +8,7 @@ import CreateSectionRequestModel from "./models/createSectionRequestModel";
 import CreateSheetRequestModel from "./models/createSheetRequestModel";
 import UpdateItemRequestModel from "./models/updateItemRequestModel";
 import UpdateSectionRequestModel from "./models/updateSectionRequestModel";
+import UploadDataRequestModel from "./models/uploadDataRequestModel";
 
 async function request<T>(endpoint: string, params: RequestInit): Promise<T> {
     const response = await fetch(`/api${endpoint}`, {
@@ -15,7 +16,8 @@ async function request<T>(endpoint: string, params: RequestInit): Promise<T> {
         headers: { "Content-Type": "application/json" },
         credentials: 'include'
     });
-    return await response.json() as T;
+    const text = await response.text();
+    return text ? JSON.parse(text) as T : (undefined as unknown as T);
 }
 
 // Auth
@@ -65,6 +67,13 @@ export function fetchNestedEntities(sheetId: number): Promise<Array<SectionModel
     return requestNestedEntity<Array<SectionModel | ItemModel>>(`getNestedEntities/${sheetId}`, {
         method: 'GET'
     })
+}
+
+export function uploadNestedEntities(request: UploadDataRequestModel): Promise<void> {
+    return requestNestedEntity<void>(`uploadNestedEntities`, {
+        method: 'POST',
+        body: JSON.stringify(request)
+    });
 }
 
 // Section

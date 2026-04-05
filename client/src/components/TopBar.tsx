@@ -15,10 +15,10 @@ function TopBar() {
             <Typography variant="h4">
                 TaskNestia
             </Typography>
-            {/* <IconButton color="inherit" onClick={(e) => handleClick(e)}>
+            <IconButton color="inherit" onClick={(e) => handleClick(e)}>
                 <MenuIcon fontSize="large" />
             </IconButton>
-            <TopBarMenu anchorEl={anchorEl} setAnchorEl={setAnchorEl} /> */}
+            <TopBarMenu anchorEl={anchorEl} setAnchorEl={setAnchorEl} />
         </AppBar>
     )
 }

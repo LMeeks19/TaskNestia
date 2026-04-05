@@ -81,7 +81,9 @@ function Page() {
     }
 
     const breakpoints = {
-        default: 2,
+        default: 4,
+        1200: 3,
+        1000: 2,
         800: 1,
     };
 

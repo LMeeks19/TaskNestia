@@ -8,7 +8,7 @@ import { nestedEntitiesState } from "../state/globalState";
 import { updateSectionEntity } from "../helpers/recursives";
 import { deleteSection, updateSection } from "../server/requests";
 import UpdateSectionRequestModel from "../server/models/updateSectionRequestModel";
-import AddNestedEntotyDialog from "./AddNestedEntityDialog";
+import AddNestedEntityDialog from "./AddNestedEntityDialog";
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ConfirmDialog, { ConfirmDialogProps } from "./ConfirmDialog";
@@ -17,6 +17,7 @@ function Section(props: { id: number }) {
     const [nestedEntities, setNestedEntities] = useRecoilState(nestedEntitiesState);
     const [section, setSection] = useState<SectionModel>({} as SectionModel);
     const [collapsed, setCollapsed] = useState<boolean>(section.items?.every(i => i.isComplete));
+    const [showCompleted, setShowCompleted] = useState<boolean>(false);
     const theme = useTheme();
 
     useEffect(() => {
@@ -78,10 +79,17 @@ function Section(props: { id: number }) {
                         />
                     }
                 />
-                <Grid size='auto' display='flex' alignItems='center' height='fit-content'>
+                <Grid size='auto' display='flex' alignItems='center' height='fit-content' gap={0.5}>
                     <Chip label={completionProgress} color={isComplete ? "success" : numberCompleted === 0 ? "error" : "warning"} sx={{ color: 'inherit' }} />
-                    <AddNestedEntotyDialog sheetId={section.sheetId} sectionId={section.id} />
+                    <AddNestedEntityDialog sheetId={section.sheetId} sectionId={section.id} />
                     <ConfirmDialog confirmDialogProps={populateConfirmDeleteDialog(section.id)} isNestedEntity={true} />
+                    <Tooltip title="Show/Hide completed items" followCursor arrow>
+                        <Checkbox
+                            sx={{ color: `${theme.palette.primary.contrastText} !important`, p: 0.5 }}
+                            checked={showCompleted}
+                            onChange={(e) => setShowCompleted(e.target.checked)}
+                        />
+                    </Tooltip>
                     <Tooltip title={collapsed ? 'Expand' : 'Collapse'} placement="top" followCursor arrow>
                         <IconButton sx={{ color: 'inherit' }} size="small" onClick={() => setCollapsed(!collapsed)}>
                             {collapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
@@ -98,9 +106,14 @@ function Section(props: { id: number }) {
                         </Grid>
                     ) : (
                         <Grid container direction='column' pt={1} gap={1}>
-                            {section.items?.map((item) => {
-                                return <Item key={item.id} itemId={item.id} sectionId={item.sectionId} />
-                            })}
+                            {showCompleted ?
+                                section.items?.map((item) => {
+                                    return <Item key={item.id} itemId={item.id} sectionId={item.sectionId} />
+                                }) :
+                                section.items?.filter((item) => !item.isComplete).map((item) => {
+                                    return <Item key={item.id} itemId={item.id} sectionId={item.sectionId} />
+                                })
+                            }
                         </Grid>
                     )}
                 </Fragment>

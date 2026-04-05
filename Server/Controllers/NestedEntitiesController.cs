@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Server.Controllers.RequestModels;
 using Server.Database;
 using Server.Enums;
 using Server.Models;
@@ -74,6 +75,42 @@ namespace Server.Controllers
 
 
             return Ok(nestedEntityModels);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UploadNestedEntities([FromBody] UploadDataRequestModel request)
+        {
+            var username = User.Identity?.Name?.Split("\\")[1];
+
+            if (!await _context.Users.AnyAsync(u => u.Username == username))
+                return Unauthorized();
+
+            var section = new Section
+            {
+                SheetId = request.SheetId,
+                Name = request.SectionName!.Trim(),
+                LastModified = DateTime.UtcNow
+            };
+
+            if (request.Type == NestedEntityTypeEnum.Section)
+            {
+                await _context.Sections.AddAsync(section);
+                await _context.SaveChangesAsync();
+            }
+
+            var items = request.UploadData.Select(data => new Item
+            {
+                SheetId = request.SheetId,
+                SectionId = request.Type == NestedEntityTypeEnum.Section ? section.Id : null,
+                Name = data.Trim(),
+                LastModified = DateTime.UtcNow,
+                IsComplete = false
+            });
+
+            await _context.Items.AddRangeAsync(items);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }
