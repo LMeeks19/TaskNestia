@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, ButtonPropsColorOverrides, useTheme, IconButton, Tooltip, Divider } from "@mui/material";
 import { OverridableStringUnion } from "@mui/types";
-import { ReactElement, useState } from "react";
+import { cloneElement, ReactElement, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
 import CloseIcon from "@mui/icons-material/CloseOutlined";
 
@@ -25,15 +25,7 @@ export default function ConfirmDialog(params: { confirmDialogProps: ConfirmDialo
     return (
         <Fragment>
             <Tooltip title={params.confirmDialogProps.mainButtonTooltipText} placement="top" followCursor arrow>
-                {params.isNestedEntity ? (
-                    <IconButton color={params.confirmDialogProps.mainButtonColour} size="small" onClick={handleClickOpen}>
-                        {params.confirmDialogProps.mainButtonIcon}
-                    </IconButton>
-                ) : (
-                    <Button sx={{ borderRadius: 2, minWidth: 'fit-content', px: '12px' }} color={params.confirmDialogProps.mainButtonColour} variant="contained" onClick={handleClickOpen}>
-                        {params.confirmDialogProps.mainButtonIcon}
-                    </Button>
-                )}
+                {cloneElement(params.confirmDialogProps.mainButtonIcon, { onClick: handleClickOpen, sx: { cursor: 'pointer' } })}
             </Tooltip>
             <Dialog open={open} onClose={handleClose} sx={{ '& .MuiPaper-root': { borderRadius: '15px' } }} fullWidth>
                 <DialogTitle sx={{ background: theme.palette.primary.main, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -50,7 +42,7 @@ export default function ConfirmDialog(params: { confirmDialogProps: ConfirmDialo
                 <Divider />
                 <DialogActions sx={{ padding: 2 }}>
                     <Button onClick={() => action()} sx={{ borderRadius: 2, minWidth: 'fit-content', px: '12px' }} color="error" variant="contained">
-                        {params.confirmDialogProps.mainButtonIcon}
+                        {cloneElement(params.confirmDialogProps.mainButtonIcon, { sx: { color: 'white !important' } })}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -60,8 +52,7 @@ export default function ConfirmDialog(params: { confirmDialogProps: ConfirmDialo
 
 export interface ConfirmDialogProps {
     mainButtonTooltipText: string;
-    mainButtonIcon: ReactElement;
-    mainButtonColour: OverridableStringUnion<'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning', ButtonPropsColorOverrides>
+    mainButtonIcon: ReactElement<any, any>;
     title: string;
     details: string;
     action: Function

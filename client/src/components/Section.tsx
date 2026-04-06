@@ -11,6 +11,8 @@ import UpdateSectionRequestModel from "../server/models/updateSectionRequestMode
 import AddNestedEntityDialog from "./AddNestedEntityDialog";
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import VisibilityOn from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ConfirmDialog, { ConfirmDialogProps } from "./ConfirmDialog";
 
 function Section(props: { id: number }) {
@@ -49,8 +51,7 @@ function Section(props: { id: number }) {
     const populateConfirmDeleteDialog = (id: number) => {
         return {
             mainButtonTooltipText: "Delete",
-            mainButtonIcon: <DeleteIcon />,
-            mainButtonColour: "error",
+            mainButtonIcon: <DeleteIcon color="error" />,
             title: "Delete Section",
             details: "Are you sure you want to delete this section and all its contents? This cannot be undone!",
             action: () => handleDelete(id)
@@ -81,19 +82,20 @@ function Section(props: { id: number }) {
                 />
                 <Grid size='auto' display='flex' alignItems='center' height='fit-content' gap={0.5}>
                     <Chip label={completionProgress} color={isComplete ? "success" : numberCompleted === 0 ? "error" : "warning"} sx={{ color: 'inherit' }} />
+                    <Tooltip title="Show/Hide completed items" followCursor arrow>
+                        {showCompleted ?
+                            <VisibilityOn onClick={() => setShowCompleted(false)} sx={{ cursor: 'pointer', color: `${theme.palette.primary.contrastText} !important` }} /> :
+                            <VisibilityOff onClick={() => setShowCompleted(true)} sx={{ cursor: 'pointer', color: `${theme.palette.primary.contrastText} !important` }} />
+                        }
+                    </Tooltip>
                     <AddNestedEntityDialog sheetId={section.sheetId} sectionId={section.id} />
                     <ConfirmDialog confirmDialogProps={populateConfirmDeleteDialog(section.id)} isNestedEntity={true} />
-                    <Tooltip title="Show/Hide completed items" followCursor arrow>
-                        <Checkbox
-                            sx={{ color: `${theme.palette.primary.contrastText} !important`, p: 0.5 }}
-                            checked={showCompleted}
-                            onChange={(e) => setShowCompleted(e.target.checked)}
-                        />
-                    </Tooltip>
                     <Tooltip title={collapsed ? 'Expand' : 'Collapse'} placement="top" followCursor arrow>
-                        <IconButton sx={{ color: 'inherit' }} size="small" onClick={() => setCollapsed(!collapsed)}>
-                            {collapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
-                        </IconButton>
+                        {collapsed ?
+                            <ExpandMoreIcon onClick={() => setCollapsed(false)} sx={{ cursor: 'pointer' }} />
+                            :
+                            <ExpandLessIcon onClick={() => setCollapsed(true)} sx={{ cursor: 'pointer' }} />
+                        }
                     </Tooltip>
                 </Grid>
             </Grid>

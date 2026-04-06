@@ -66,8 +66,7 @@ function Page() {
     const populateConfirmDeleteDialog = (id: number) => {
         return {
             mainButtonTooltipText: "Delete",
-            mainButtonIcon: <DeleteIcon />,
-            mainButtonColour: "error",
+            mainButtonIcon: <DeleteIcon color="error" />,
             title: "Delete Sheet",
             details: "Are you sure you want to delete this sheet and all its contents? This cannot be undone!",
             action: () => removeSheet(id)
@@ -81,9 +80,7 @@ function Page() {
     }
 
     const breakpoints = {
-        default: 4,
-        1200: 3,
-        1000: 2,
+        default: 2,
         800: 1,
     };
 

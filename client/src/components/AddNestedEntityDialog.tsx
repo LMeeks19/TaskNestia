@@ -70,15 +70,7 @@ export default function AddNestedEntityDialog(props: { sheetId: number, sectionI
     return (
         <Fragment>
             <Tooltip title="Add" placement="top" followCursor arrow>
-                {props.sectionId ? (
-                    <IconButton sx={{ color: 'inherit' }} size="small" onClick={handleClickOpen}>
-                        <AddIcon />
-                    </IconButton>
-                ) : (
-                    <Button sx={{ borderRadius: 2, minWidth: 'fit-content', px: '12px' }} variant="contained" onClick={handleClickOpen}>
-                        <AddIcon />
-                    </Button>
-                )}
+                <AddIcon onClick={handleClickOpen} sx={{ cursor: 'pointer' }} />
             </Tooltip>
             <Dialog open={open} onClose={handleClose} sx={{ '& .MuiPaper-root': { borderRadius: '15px' } }} fullWidth>
                 <DialogTitle sx={{ background: theme.palette.primary.main, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

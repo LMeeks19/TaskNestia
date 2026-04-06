@@ -66,8 +66,7 @@ function Item(props: { itemId: number, sectionId?: number }) {
     const populateConfirmDeleteDialog = (id: number) => {
         return {
             mainButtonTooltipText: "Delete",
-            mainButtonIcon: <DeleteIcon />,
-            mainButtonColour: "error",
+            mainButtonIcon: <DeleteIcon color="error" />,
             title: "Delete Item",
             details: "Are you sure you want to delete this item? This cannot be undone!",
             action: () => handleDelete(id)
