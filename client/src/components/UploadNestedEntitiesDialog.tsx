@@ -3,7 +3,6 @@ import { useState } from "react";
 import CloseIcon from "@mui/icons-material/CloseOutlined";
 import AddIcon from "@mui/icons-material/AddOutlined";
 import NestedEntityType from "../enums/nestedEntityTypeEnum";
-import SheetModel from "../models/sheetModel";
 import { useRecoilValue } from "recoil";
 import { sheetsState } from "../state/globalState";
 import UploadDataRequestModel from "../server/models/uploadDataRequestModel";

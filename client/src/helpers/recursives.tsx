@@ -1,5 +1,6 @@
 import ItemModel from "../models/itemModel";
 import SectionModel from "../models/sectionModel";
+import UpdateNestedEntityModel from "../models/updateNestedEntityModel";
 
 export function updateItemEntity(entity: ItemModel, model: UpdateNestedEntityModel): ItemModel {
     return {

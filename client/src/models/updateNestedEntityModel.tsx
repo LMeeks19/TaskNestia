@@ -3,3 +3,5 @@ interface UpdateNestedEntityModel {
     lastModified: string;
     isComplete: boolean;
 }
+
+export default UpdateNestedEntityModel;
