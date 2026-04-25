@@ -85,20 +85,31 @@ function Page() {
     };
 
     return (
-        <Fragment>
-            {isLoaded ?
-                <Box p={3} display='flex' flexDirection='column' flexGrow={1} color={theme.palette.primary.contrastText}>
-                    <TabContext value={selectedTab}>
-                        <Box sx={{ '& .MuiTabs-indicator': { background: 'transparent' } }}>
-                            <TabList variant="scrollable" scrollButtons={true} onChange={handleChange} sx={{ height: '48px', '& :focus': { outline: 'none' }, '& :focus-visible': { outline: 'none' }, '& .MuiTabs-list': { gap: 1 }, '& .Mui-selected': { background: sheets[selectedTab]?.hexColour, zIndex: 3 }, '& .MuiTab-root': { '& :hover': { zIndex: 3 } } }}>
-                                <AddSheetDialog sheets={sheets} setSheets={setSheets} />
-                                {sheets.map((sheet, index) =>
-                                    <Tab key={sheet.id} label={sheet.name} value={index} sx={{ lineHeight: 'normal', background: sheet.hexColour, borderRadius: '15px 15px 0 0', color: '#f1f1f1 !important' }} />
-                                )}
-                            </TabList>
-                        </Box>
+        isLoaded ?
+            <Box p={3} display='flex' flexDirection='column' flexGrow={1} color={theme.palette.primary.contrastText}>
+                <TabContext value={selectedTab}>
+                    <Box sx={{ '& .MuiTabs-indicator': { background: 'transparent' } }}>
+                        <TabList variant="scrollable" scrollButtons={true} onChange={handleChange} sx={{ height: '48px', '& :focus': { outline: 'none' }, '& :focus-visible': { outline: 'none' }, '& .MuiTabs-list': { gap: 1,height: '100%' }, '& .Mui-selected': { background: sheets[selectedTab]?.hexColour, zIndex: 3 }, '& .MuiTab-root': { '& :hover': { zIndex: 3 } } }}>
+                            <AddSheetDialog sheets={sheets} setSheets={setSheets} />
+                            {sheets.map((sheet, index) =>
+                                <Tab key={sheet.id} label={sheet.name} value={index} sx={{ lineHeight: 'normal', background: sheet.hexColour, borderRadius: '15px 15px 0 0', color: '#f1f1f1 !important' }} />
+                            )}
+                        </TabList>
+                    </Box>
 
-                        {sheets.map((sheet, index) =>
+                    {sheets.length === 0 ?
+                        <Box sx={{ display: 'flex', flexGrow: 1, background: theme.palette.primary.main, borderRadius: '15px', boxShadow: '0 0 10px 1px black', zIndex: 2 }}>
+                            <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' flexGrow={1} gap={1}>
+                                <Typography variant="h4" sx={{ opacity: 0.7 }}>
+                                    You don't have any sheets yet!
+                                </Typography>
+                                <Typography variant="h6" sx={{ opacity: 0.7 }}>
+                                    Click the + button to create your first sheet
+                                </Typography>
+                            </Box>
+                        </Box>
+                        :
+                        sheets.map((sheet, index) =>
                             <TabPanel key={sheet.id} value={index} sx={{ flexGrow: 1, background: sheet.hexColour, borderRadius: '15px', boxShadow: '0 0 10px 1px black', zIndex: 2 }}>
                                 <Box display='flex' alignItems='center' justifyContent='space-between' gap={1}>
                                     <Typography variant="h5" noWrap sx={{ my: 'auto', lineHeight: 'normal' }}>{sheet.name.toUpperCase()}</Typography>
@@ -126,12 +137,10 @@ function Page() {
                                 </Box>
                             </TabPanel>
                         )}
-                    </TabContext>
-                </Box>
-                :
-                <Loader />
-            }
-        </Fragment >
+                </TabContext>
+            </Box>
+            :
+            <Loader />
     );
 }
 

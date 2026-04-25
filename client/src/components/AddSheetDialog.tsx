@@ -34,7 +34,7 @@ export default function AddSheetDialog(props: { sheets: Array<SheetModel>, setSh
     return (
         <Fragment>
             <Tooltip title="Add" placement="top" followCursor arrow>
-                <Button sx={{ borderRadius: '15px 15px 0 0', minWidth: 'fit-content', px: '12px' }} variant="contained" onClick={handleClickOpen}>
+                <Button sx={{ borderRadius: '15px 15px 0 0', minWidth: 'fit-content', px: '12px', zIndex: props.sheets.length === 0 ? 999 : 'auto' }} variant="contained" onClick={handleClickOpen}>
                     <AddIcon />
                 </Button>
             </Tooltip>
